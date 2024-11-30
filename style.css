@@ -1,0 +1,533 @@
+@font-face {
+    font-family: 'geistregular';
+    src: url('font/GeistVariableVF.woff2') format('woff2');
+    font-weight: 100 900; /* Rentang berat font, jika font mendukung */
+    font-style: normal;
+    color: #254055;
+}
+
+#containermap {
+    width: 100%;
+    height: 100vh;
+    margin: 0 auto;
+    position: relative;
+}
+
+/* Gaya untuk card */
+.info-card-desktop {
+    height: 40vh;
+    position: absolute;
+    right: 3vw; /* Responsive right positioning */
+    width: 20vw; /* Set a responsive width */
+    /* background-color: rgba(255, 255, 255, 0.8); */
+    background-color: #FFFFFF;
+    padding: 1.5vh 1.5vh 1.5vh 2.5vh;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 15px;
+}
+
+.info-card-desktop div {
+    max-height: calc(36vh - 3vh); /* Adjust based on padding and spacing */
+    overflow-y: auto; /* Vertical scroll if content overflows */
+    padding-right: 1vh; /* Add padding to avoid scroll bar overlap */
+    /* padding-left: 1vh; */
+}
+
+#info-card-desktop {
+    top: 5vh;
+    display: none;
+}
+
+#info-card-desktop-2 {
+    /* top: 50vh; */
+    top: 5vh;
+}
+
+
+/* Gaya untuk card panjang */
+#long-card {
+    position: absolute;
+    left: 45%;
+    top: 86vh;
+    transform: translateX(-50%);
+    width: 50vw;
+    background-color: rgba(255, 255, 255, 0.8);
+    padding: 2vh 2vh 1vh;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 16px;
+}
+
+#text-network {
+    position: absolute;
+    left: 36%;
+    top: 12%;
+    transform: translateX(-50%);
+    /* width: 300px; */
+}
+/* Gaya untuk input teks */
+/* #text-input {
+    position: absolute;
+    left: 31%;
+    top: 22vh;
+    transform: translateX(-50%);
+    width: 23vw;
+    height: 3vh;
+    padding: 1vh;
+    padding-right: 30px;
+    padding-left: 15px;
+    border-radius: 20px;
+    border: 1px solid #ccc;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    background-image: url(./../img/icon-search.png);
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    background-size: 20px 20px;
+} */
+#text-input:focus {
+    outline: none;
+}
+.modal-content-map .title-card{
+    color: #1F9C81;
+    margin-bottom: 10px;
+    font-size: 24px;
+    font-weight: 700;
+    margin-top: 20px;
+}
+.info-card-desktop .title-card {
+    color: #1F9C81;
+    margin-bottom: 10px;
+    font-size: 28px;
+    font-weight: 700;
+    margin-top: 5px;
+}
+
+.info-card-desktop p {
+    font-size: 15px;
+    font-weight: 400;
+    margin: 0;
+}
+
+.loading {
+    margin-top: 10em;
+    text-align: center;
+    color: gray;
+}
+
+.highcharts-point.active {
+    fill: #3399FF !important;
+    stroke: black;
+    stroke-width: 0px;
+}
+.highcharts-point:hover {
+
+    stroke: rgb(222, 73, 233);
+}
+/* button */
+.button-primary {
+    background-color: #DDF0FF;
+    color: #254055;
+    border: none;
+    padding: 5px 10px 5px 10px;
+    border-radius:15px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+}
+/* content agency */
+.content-agency{
+    margin: 10px 0px 20px 0px;
+}
+.content-agency .coordinate {
+    font-size: 14px;
+    margin-bottom: 4px;
+}
+
+.content-agency .coordinate img {
+    vertical-align: middle;
+}
+
+.content-agency .agencyname {
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 1px;
+}
+
+.content-agency .coordinator-name {
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 1px;
+}
+
+.content-agency .website {
+    font-size: 14px;
+    color: #05c987;
+}
+.button-primary:hover {
+    color: #FFFFFF;
+    background-color: #254055;
+}
+.button-primary.active {
+    color: #FFFFFF;
+    background-color: #254055; /* Active button color */
+}
+
+.info-card-desktop div::-webkit-scrollbar {
+    width: 8px;
+}
+
+.info-card-desktop div::-webkit-scrollbar-button {
+    display: none;
+}
+
+.info-card-desktop div::-webkit-scrollbar-thumb {
+    background-color: #0af9c6a6;
+    border-radius: 10px;
+}
+
+.info-card-desktop div::-webkit-scrollbar-track {
+    background-color: #f1f1f1;
+}
+/* Firefox */
+.info-card-desktop div {
+    scrollbar-width: thin; /* Ukuran tipis */
+    scrollbar-color: #0af9c6a6 #f1f1f1; /* thumb color dan track color */
+}
+ /* Container untuk setiap item */
+.item {
+display: inline-flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+/* Gaya untuk indikator warna */
+.color-indicator {
+    width: 50px;
+    height: 15px;
+    border: 1px solid black;
+    border-radius: 10px;
+    margin-right: 10px;
+}
+
+/* Warna indikator */
+.color-map {
+    background-color: #396BD3;
+}
+
+.color-map-2 {
+    background-color: #6898FC;
+}
+
+.color-map-3 {
+    background-color: #8bb6e4;
+}
+.color-map-4 {
+    background-color: #ffffff;
+}
+
+.item:hover .color-indicator {
+    opacity: 0.8;
+}
+
+.item.active .color-indicator {
+    border: 2px solid #ffce00; /* Menambahkan border kuning ketika item aktif */
+}
+/* .content-title{
+    position: absolute;
+    left: 38%;
+    top: 10vh;
+    transform: translateX(-50%);
+    width: 40vw;
+    padding: 10px;
+    font-size: 6vh;
+    font-weight: 700;
+} */
+.content-title-mobile{
+    display: none;
+    width: 38vh;
+    padding: 10px;
+    font-size: 3vh;
+    font-weight: 700;
+    margin: 0 auto;
+}
+.content-title-mobile .european{
+    color: #1F9C81;
+    text-align: left;
+}
+.content-title-mobile .about{
+    color: #1F9C81;
+    text-align: left;
+}
+.content-title-mobile .content{
+    font-size: 15px;
+    font-weight: 400;
+}
+.country-content {
+    display: flex;
+    align-items: center;
+    justify-content: left;
+    font-size: 18px;
+    margin-bottom: 10px;
+}
+.country-content img {
+    margin-right: 5px;
+}
+.country-content-mobile {
+    display: flex;
+    align-items: center;
+    justify-content: left;
+    font-size: 18px;
+    margin-bottom: 20px;
+}
+.country-content-mobile img {
+    margin-right: 5px;
+}
+
+.modal-map {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.4);
+}
+
+.modal-content-map {
+    background-color: #fefefe;
+    margin: 15% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+    border-radius: 5px;
+    position: relative;
+}
+
+.modal-close {
+    color: #aaa;
+    position: absolute;
+    top: 0px;
+    right: 10px;
+    font-size: 38px;
+    cursor: pointer;
+}
+
+.modal-close:hover,
+.modal-close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+.suggestions-container {
+    position: absolute;
+    bottom: 0;
+    transform: translateY(+100%);
+    width: 100%; /* Matches the input width */
+    max-height: 150px;
+    background: white;
+    border-radius: 10px; /* Rounded bottom corners to match the input */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    z-index: 110;
+}
+
+.suggestion-item {
+    padding: 8px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border-bottom: 1px solid #eee;
+}
+
+.suggestion-item:last-child {
+    border-bottom: none; /* Remove border from the last item */
+}
+
+.suggestion-item:hover {
+    background-color: #f0f0f0;
+}
+
+.info-card-mobile {
+    height: 40vh;
+    right: 3vw; /* Responsive right positioning */
+    width: 20vw; /* Set a responsive width */
+    background-color: rgba(255, 255, 255, 0.8);
+    padding: 1.5vh;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+}
+
+.info-card-mobile div {
+    max-height: calc(36vh - 3vh); /* Adjust based on padding and spacing */
+    overflow-y: auto; /* Vertical scroll if content overflows */
+    padding-right: 1vh; /* Add padding to avoid scroll bar overlap */
+    /* padding-left: 1vh; */
+}
+
+#info-card-mobile {
+    top: 5vh;
+}
+
+#info-card-mobile-2 {
+    top: 50vh;
+}
+
+.custom-page.get-involved {
+    position: relative;
+    margin: 0;
+    padding: 0;
+    font-family: 'geistregular';
+    color: #254055;
+}
+
+#block-democracy-content {
+    padding: unset !important
+}
+
+.custom-page > .content {
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    left: 34%;
+    top: 10vh;
+    transform: translateX(-50%);
+    z-index: 1;
+}
+
+.content-title {
+    width: 100%;
+    font-size: 6vh;
+    font-weight: 700;
+    margin-bottom: 15px;
+}
+
+#text-input {
+    width: 23vw;
+    height: 3vh;
+    padding: 1vh;
+    padding-right: 30px;
+    padding-left: 15px;
+    border-radius: 20px;
+    border: 1px solid #ccc;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    background-image: url(./img/icon-search.png);
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    background-size: 20px 20px;
+}
+
+.content-search {
+    position: relative;
+    width: fit-content;
+    display: flex;
+    flex-direction: column;
+}
+
+.icon-map-point {
+  background-image: url(./img/point.png);
+  background-repeat: no-repeat;
+  width: 10px;
+  height: auto;
+  display: block;
+}
+
+.text-location {
+  display: flex;
+  gap: 5px;
+}
+
+.text-location, .text-link {
+  font-size: 14px !important;
+  margin-bottom: 4px !important;
+}
+
+.text-agency, .text-coordinate {
+  font-size: 16px !important;
+  font-weight: 700 !important;
+}
+
+.text-agency {
+  margin-bottom: 4px !important;
+}
+
+.text-coordinate {
+  margin-bottom: 2px !important;
+}
+
+@media only screen and (max-width: 768px) {
+    .info-card-desktop div::-webkit-scrollbar {
+        display: none;
+    }
+    .info-card-desktop div {
+        scrollbar-width: none; /* Ukuran tipis */
+    }
+    .info-card-desktop {
+        display: block;
+        width: 38vh;
+        padding: 10px;
+        font-size: 3vh;
+        font-weight: 700;
+        margin: 0 auto;
+        box-shadow: none;
+        border-radius: 0;
+        background-color: transparent;
+    }
+    #info-card-desktop-2 {
+        top: 79vh;
+        right: auto;
+    }
+    .info-card-desktop h2 {
+        color: #1F9C81;
+        margin-bottom: 10px;
+        font-size: 25px;
+    }
+
+    .custom-page > .content {
+        position: relative;
+        left: unset;
+        top: unset;
+        transform: unset;
+        z-index: unset;
+        align-items: center;
+    }
+
+    .content-title {
+        width: 38vh;
+        padding: 10px;
+        font-size: 3vh;
+        font-weight: 700;
+        margin: 0 auto;
+    }
+
+    /* .suggestions-container {
+        position: absolute;
+        bottom: 0;
+        transform: translateY(+100%);
+    } */
+
+    #text-input {
+        width: 35vh;
+        height: 1vh;
+        padding: 14px;
+    }
+
+    #containermap{
+        height: 70vh;
+    }
+    .content-title-mobile{
+        display: block;
+    }
+    #info-card-desktop {
+        display: none;
+    }
+    /* #info-card-desktop-2 {
+        display: none;
+    } */
+    #long-card {
+        top: 60%;
+        width: 75%;
+        left: 50%;
+    }
+
+}

@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MAP</title>
+    <link href="style.css" rel="stylesheet" type="text/css"></link>
+</head>
+<body>
+<script src="./js/jquery-3.7.1.min.js"></script>
+<script src="./js/highmaps.js"></script>
+<script src="./js/exporting.js"></script>
+<div class="custom-page get-involved">
+    <div class="content">
+        <div class="content-title">
+            <span class="european">A EUROPEAN NETWORK</span>
+        </div>
+        <div class="content-search">
+            <input id="text-input" type="text" placeholder="Search on country..." />
+            <div id="suggestions" class="suggestions-container"></div>
+        </div>
+    </div>
+    <div id="containermap"></div>
+    <div>
+        <!-- Card pertama -->
+        <div id="info-card-desktop" class="info-card-desktop">
+            <div class="title-card"> NATIONAL CONTACT</div>
+            <div id="contentDesktop"></div>
+        </div>
+
+        <div id="info-card-desktop-2" class="info-card-desktop">
+            <div class="title-card"> ABOUT </div>
+            <div style="padding: 0px 20px 0px 0px;">
+            <p style="margin-bottom: 10px;">
+                The Democracy Reloading Program members include the Erasmus+ youth national agencies of
+                Belgium (both French and Flemish communities), Italy, France, the Netherlands, Portugal,
+                Norway, Hungary, Slovakia, Poland, Estonia, Spain, Cyprus, Sweden, Greece, Bulgaria, and Armenia.
+            </p>
+            <p>
+                In addition to these countries and their agencies, national agencies across Europe are
+                prepared to provide information on how to get involved in international youth programs
+            </p>
+            </div>
+        </div>
+    </div>
+    <div id="myModal" class="modal-map">
+        <div class="modal-content-map">
+            <div class="modal-close" onclick="closeModal()">&times;</div>
+            <div class="title-card"> NATIONAL CONTACT </div>
+            <div id="contentMobile"></div>
+        </div>
+    </div>
+</div>
+
+<script>
+    
+    let chart; // Declare chart globally
+        let globalData;
+        let globalArrayData;
+        function changeByCategoryColor(category){
+            let changeColor = "#6898FC";
+            return changeColor;
+        }
+        function showData(categoryName, data) {
+            const listContainers = document.getElementsByClassName('value_country_list_items');
+            Array.from(listContainers).forEach(container => {
+                container.innerHTML = '';
+                if (categoryName === 'All') {
+                    for (const [category, items] of Object.entries(data.categories)) {
+                        items.forEach(item => {
+                            const contentDiv = document.createElement('div');
+                            contentDiv.classList.add('content-agency'); // General class name, adjust as needed
+
+                            // Custom content based on category type
+                            if (category === 'Agencies') {
+                                contentDiv.innerHTML = `
+                                    <div class="text-location">
+                                        <span class="icon-map-point"></span> <span> ${item.locationName || 'Unknown Location'} </span>
+                                    </div>
+                                    <div class="text-agency">
+                                        ${item.agencyName || 'Unknown Agency'}
+                                    </div>
+                                    <div class="text-coordinate">
+                                        ${item.coordinatorName || 'Unknown Coordinator'}
+                                    </div>
+                                    <div class="text-link">
+                                        <a href="${item.website || '#'}" style="color: #05c987;">${item.website || 'No Website Available'}</a>
+                                    </div>
+                                `;
+                            } else if (category === 'Experts') {
+                                contentDiv.innerHTML = `
+                                    <div class="text-location">
+                                        <span class="icon-map-point"></span> <span> ${item.locationName || 'Unknown Location'} </span>
+                                    </div>
+                                    <div class="text-agency">
+                                        ${item.name || 'Unknown Expert'}
+                                    </div>
+                                    <div class="text-link">
+                                        <a href="mailto:${item.email || ''}" style="color: #05c987;">${item.email || 'No Email'}</a>
+                                    </div>
+                                `;
+                            } else if (category === 'Partners') {
+                                contentDiv.innerHTML = `
+                                    <div class="text-location">
+                                        <span class="icon-map-point"></span> <span> ${item.locationName || 'Unknown Location'} </span>
+                                    </div>
+                                    <div class="text-agency">
+                                        ${item.name || 'Unknown Partner'}
+                                    </div>
+                                    <div class="text-link">
+                                        <a href="${item.website || '#'}" style="color: #05c987;">${item.website || 'No Website Available'}</a>
+                                    </div>
+                                `;
+                            }
+
+                            // Append the constructed item to the current container
+                            container.appendChild(contentDiv);
+                        });
+                    }
+                } else {
+                    const items = data.categories[categoryName];
+                    items.forEach(item => {
+                        const contentDiv = document.createElement('div');
+                        contentDiv.classList.add('content-agency'); // General class name, adjust as needed
+
+                        // Custom content based on category type
+                        if (categoryName === 'Agencies') {
+                            contentDiv.innerHTML = `
+                                <div class="text-location">
+                                    <span class="icon-map-point"></span> <span> ${item.locationName || 'Unknown Location'} </span>
+                                </div>
+                                <div class="text-agency">
+                                    ${item.agencyName || 'Unknown Agency'}
+                                </div>
+                                <div class="text-coordinate">
+                                    ${item.coordinatorName || 'Unknown Coordinator'}
+                                </div>
+                                <div class="text-link">
+                                    <a href="${item.website || '#'}" style="color: #05c987;">${item.website || 'No Website Available'}</a>
+                                </div>
+                            `;
+                        } else if (categoryName === 'Experts') {
+                            contentDiv.innerHTML = `
+                                <div class="text-location">
+                                    <span class="icon-map-point"></span> <span> ${item.locationName || 'Unknown Location'} </span>
+                                </div>
+                                <div class="text-agency">
+                                    ${item.name || 'Unknown Expert'}
+                                </div>
+                                <div class="text-link">
+                                    <a href="mailto:${item.email || ''}" style="color: #05c987;">${item.email || 'No Email'}</a>
+                                </div>
+                            `;
+                        } else if (categoryName === 'Partners') {
+                            contentDiv.innerHTML = `
+                                <div class="text-location">
+                                    <span class="icon-map-point"></span> <span> ${item.locationName || 'Unknown Location'} </span>
+                                </div>
+                                <div class="text-agency">
+                                    ${item.name || 'Unknown Partner'}
+                                </div>
+                                <div class="text-link">
+                                    <a href="${item.website || '#'}" style="color: #05c987;">${item.website || 'No Website Available'}</a>
+                                </div>
+                            `;
+                        }
+
+                        // Append the constructed item to the current container
+                        container.appendChild(contentDiv);
+                    });
+                }
+            });
+        }
+        // Function to open the modal if screen width is less than or equal to 768px
+        function openModal() {
+            if (window.innerWidth <= 768) {
+                document.getElementById("myModal").style.display = "block";
+            }
+        }
+
+        // Function to close the modal
+        function closeModal() {
+            document.getElementById("myModal").style.display = "none";
+        }
+
+        // Close the modal if the user clicks anywhere outside of it
+        window.onclick = function(event) {
+            const modal = document.getElementById("myModal");
+            if (event.target === modal) {
+                closeModal();
+            }
+        };
+
+        // Function to update map navigation based on screen width
+        function updateMapNavigation() {
+            const isMobileView = window.innerWidth <= 768;
+            if(isMobileView){
+                document.getElementById('info-card-desktop').style.display = 'none';
+                if (chart) { // Check if chart is initialized
+                    chart.update({
+                        mapNavigation: {
+                            enabled: isMobileView,
+                            buttonOptions: {
+                                align:'right',
+                                verticalAlign: 'top',
+                                x: -10,
+                                y: 20
+                            }
+                        }
+                    });
+                }
+            }else{
+                if (chart) { // Check if chart is initialized
+                    chart.update({
+                        mapNavigation: {
+                            enabled: isMobileView,
+                            buttonOptions: {
+                                align:'left',
+                                verticalAlign: 'top',
+                                x: -10,
+                                y: 20
+                            }
+                        }
+                    });
+                }
+            }
+
+        }
+        window.addEventListener('resize', updateMapNavigation);
+
+        const input = document.getElementById("text-input");
+        const suggestionsContainer = document.getElementById("suggestions");
+        input.addEventListener("input", function () {
+            const query = this.value.trim().toLowerCase();
+            suggestionsContainer.innerHTML = "";
+
+            if (query) {
+                const filteredData = globalArrayData.filter(item => 
+                    item.name.toLowerCase().includes(query) && item.value != null
+                );
+                                
+                filteredData.forEach(item => {
+                    globalData = item;
+                    let changeColor = changeByCategoryColor(item.category)
+                    const suggestion = document.createElement("div");
+                    suggestion.className = "suggestion-item";
+                    // <img src="${item.image}" alt="${item.name}" width="20" height="15" />
+                    suggestion.innerHTML = `
+                        <img src="${item.image}" alt="${item.name}" width="20" height="15" />
+                        <span>${item.name}</span>
+                    `;
+                    // Function to handle the selection
+                    const selectSuggestion = () => {
+                        openModal();
+                        input.value = item.name;
+                        suggestionsContainer.innerHTML = "";
+
+                        const series = chart.series[0];
+                        series.points.forEach(point => {
+                            point.update({ dataLabels: { enabled: false } }, false);
+                            if (point['hc-key'] === item['hc-key']) {
+                                point.update({
+                                    dataLabels: {
+                                        enabled: true,
+                                        format: '{point.name}',
+                                        align: 'center',
+                                        verticalAlign: 'middle',
+                                        style: {
+                                            fontWeight: 'bold',
+                                            color: 'black',
+                                            textOutline: 'none'
+                                        }
+                                    }
+                                });
+                                const contentHTML = `
+                                        <div class="country-content">
+                                            <img class="value_country_flag" style=" width: 24px;height: 24px;border-radius: 50%;object-fit: cover;overflow: hidden;" src="Belgium.png" alt="Belgium">
+                                            <span class="value_country_name" style="font-weight: 700;"></span>&nbsp;
+                                            <span class="value_country_name_jargon" style="font-weight: 700; color: #6898FC;"></span>
+                                        </div>
+                                        <div style="margin-top: 14px;">
+                                            <button class="button-primary">Agency</button>
+                                            <button class="button-primary">Experts</button>
+                                            <button class="button-primary">Partners</button>
+                                        </div>
+                                        <hr style="border: 1px solid #D4D4D4; margin-top: 15px;" />
+                                        <span class="value_country_list_items"></span>
+                                    `;
+
+                                    // Menggunakan konten yang sama untuk kedua elemen
+                                    const addContentMobile = document.getElementById('contentMobile');
+                                    const addContentDesktop = document.getElementById('contentDesktop');
+
+                                    addContentMobile.innerHTML = contentHTML;
+                                    addContentDesktop.innerHTML = contentHTML;
+
+                                    // Update elemen berdasarkan kelas
+                                    const flags = document.getElementsByClassName('value_country_flag');
+                                    const names = document.getElementsByClassName('value_country_name');
+                                    const jargons = document.getElementsByClassName('value_country_name_jargon');
+
+                                    // Pastikan semua elemen diperbarui
+                                    for (let i = 0; i < flags.length; i++) {
+                                        flags[i].src = globalData.image;
+                                        flags[i].alt = globalData.name;
+                                    }
+
+                                    for (let i = 0; i < names.length; i++) {
+                                        names[i].textContent = globalData.name;
+                                    }
+
+                                    for (let i = 0; i < jargons.length; i++) {
+                                        jargons[i].textContent = `(${globalData.category})`;
+                                    }
+                                    //
+                                    const buttons = document.querySelectorAll('.button-primary');
+                                    buttons.forEach(button => {
+                                            buttons.forEach(btn => btn.classList.remove('active'));
+                                    });
+
+                                    if(window.innerWidth <= 768){
+                                        // showDataMobile('All', globalData)
+                                    }else{
+                                        document.getElementById('info-card-desktop').style.display = 'block';
+                                        document.getElementById('info-card-desktop-2').style.top = '50vh';
+                                    }
+                                    const buttonCliks = document.querySelectorAll('.button-primary');
+                                    console.log('ada', buttonCliks)
+                                    buttonCliks.forEach(button => {
+                                        button.addEventListener('click', function() {
+                                            
+                                            const isActive = this.classList.contains('active');
+
+                                            // Remove 'active' class from all buttonCliks
+                                            buttonCliks.forEach(btn => btn.classList.remove('active'));
+
+                                            if (!isActive) {
+                                                // If the button was not active, activate it and show the corresponding data
+                                                this.classList.add('active');
+                                                let category = this.textContent.trim();
+                                                if(category === "Agency"){
+                                                    category = "Agencies";
+                                                }
+
+                                                showData(category === 'All' ? 'All' : category, globalData);
+                                            } else {
+                                                const anyActive = Array.from(buttons).some(btn => btn.classList.contains('active'));
+                                                if (!anyActive) {
+                                                    showData('All', globalData);
+                                                }
+                                            }
+                                        });
+                                    });
+                                    //
+                                    point.graphic.css({
+                                        fill: changeColor
+                                    });
+                                // document.getElementById('value_country_flag').src = item.image;
+                                // document.getElementById('value_country_name').textContent = item.name;
+                                // document.getElementById('value_country_name_jargon').textContent = "("+item.category+")";
+                                showData('All', globalData);
+
+                                if (window.innerWidth <= 768) {
+                                    // Add mobile-specific logic if needed
+                                } else {
+                                    document.getElementById('info-card-desktop').style.display = 'block';
+                                    document.getElementById('info-card-desktop-2').style.top = '50vh';
+                                }
+                            } else {
+                                point.graphic.css({
+                                    fill: '#DDF0FF'
+                                });
+                            }
+                        });
+                    };
+
+                    // Trigger selection on click
+                    suggestion.addEventListener("click", selectSuggestion);
+
+                    // Trigger selection on Enter key
+                    suggestion.addEventListener("keydown", (event) => {
+                        if (event.key === "Enter") {
+                            selectSuggestion();
+                        }
+                    });
+
+                    suggestionsContainer.appendChild(suggestion);
+                });
+            }
+        });
+
+        // Optional: Enable Enter key on the main input field to select the first suggestion
+        input.addEventListener("keydown", (event) => {
+            if (event.key === "Enter" && suggestionsContainer.firstChild) {
+                suggestionsContainer.firstChild.click(); // Select the first suggestion if Enter is pressed
+            }
+        });
+
+
+        // Initialize the chart and fetch data asynchronously
+        (async () => {
+            const data = await fetch(
+                'https://primezzy.online/api/countries'
+            ).then(response => response.json());
+
+            const topology = await fetch(
+                'https://primezzy.online/api/mapping'
+            ).then(response => response.json());
+
+            function cekCategory(data) {
+                for (let i = 0; i < data.length; i++) {
+                    data[i].color = '#DDF0FF';
+                }
+                return data;
+            }
+
+            const updateData = cekCategory(data);
+            globalArrayData = updateData;
+            console.log('data', globalArrayData)
+            // Create the chart
+            chart = Highcharts.mapChart('containermap', {
+                chart: {
+                    map: topology
+                },
+
+                title: null, // Remove title
+
+                exporting: {
+                    enabled: false // Disable export button
+                },
+
+                mapNavigation: {
+                    // enabled: (window.innerWidth <= 768),
+                    enabled: true,
+                    buttonOptions: {
+                        align: (window.innerWidth <= 768) ? 'right' : 'left',
+                        verticalAlign: 'top',
+                        x: -10,
+                        y: 20
+                    }
+                },
+
+                mapView: {
+                    center: [10, 50], // Center to Europe
+                    zoom: 4.5
+                },
+
+                colorAxis: false,
+
+                plotOptions: {
+                    series: {
+                        point: {
+                            events: {
+                                click: function () {
+                                    globalData = this.options
+                                    let changeColor = changeByCategoryColor(this.options.category);
+                                    this.series.points.forEach(point => {
+                                        point.graphic.css({
+                                            fill: '#DDF0FF',
+                                        });
+                                    });
+                                    this.graphic.css({
+                                        fill: changeColor
+                                    });
+                                    const contentHTML = `
+                                        <div class="country-content">
+                                            <img class="value_country_flag" style=" width: 24px;height: 24px;border-radius: 50%;object-fit: cover;overflow: hidden;" src="Belgium.png" alt="Belgium">
+                                            <span class="value_country_name" style="font-weight: 700;"></span>&nbsp;
+                                            <span class="value_country_name_jargon" style="font-weight: 700; color: #6898FC;"></span>
+                                        </div>
+                                        <div style="margin-top: 14px;">
+                                            <button class="button-primary">Agency</button>
+                                            <button class="button-primary">Experts</button>
+                                            <button class="button-primary">Partners</button>
+                                        </div>
+                                        <hr style="border: 1px solid #D4D4D4; margin-top: 15px;" />
+                                        <span class="value_country_list_items"></span>
+                                    `;
+
+                                    // Menggunakan konten yang sama untuk kedua elemen
+                                    const addContentMobile = document.getElementById('contentMobile');
+                                    const addContentDesktop = document.getElementById('contentDesktop');
+
+                                    addContentMobile.innerHTML = contentHTML;
+                                    addContentDesktop.innerHTML = contentHTML;
+
+                                    // Update elemen berdasarkan kelas
+                                    const flags = document.getElementsByClassName('value_country_flag');
+                                    const names = document.getElementsByClassName('value_country_name');
+                                    const jargons = document.getElementsByClassName('value_country_name_jargon');
+
+                                    // Pastikan semua elemen diperbarui
+                                    for (let i = 0; i < flags.length; i++) {
+                                        flags[i].src = this.options.image;
+                                        flags[i].alt = this.options.name;
+                                    }
+
+                                    for (let i = 0; i < names.length; i++) {
+                                        names[i].textContent = this.options.name;
+                                    }
+
+                                    for (let i = 0; i < jargons.length; i++) {
+                                        jargons[i].textContent = `(${this.options.category})`;
+                                    }
+                                    
+                                    showData('All', globalData);
+                                    const buttons = document.querySelectorAll('.button-primary');
+                                    buttons.forEach(button => {
+                                            buttons.forEach(btn => btn.classList.remove('active'));
+                                    });
+
+                                    if(window.innerWidth <= 768){
+                                        // showDataMobile('All', globalData)
+                                    }else{
+                                        document.getElementById('info-card-desktop').style.display = 'block';
+                                        document.getElementById('info-card-desktop-2').style.top = '50vh';
+                                    }
+
+                                    openModal(); // Call function to open modal
+
+                                    const buttonCliks = document.querySelectorAll('.button-primary');
+                                    console.log('ada', buttonCliks)
+                                    buttonCliks.forEach(button => {
+                                        button.addEventListener('click', function() {
+                                            
+                                            const isActive = this.classList.contains('active');
+
+                                            // Remove 'active' class from all buttonCliks
+                                            buttonCliks.forEach(btn => btn.classList.remove('active'));
+
+                                            if (!isActive) {
+                                                // If the button was not active, activate it and show the corresponding data
+                                                this.classList.add('active');
+                                                let category = this.textContent.trim();
+                                                if(category === "Agency"){
+                                                    category = "Agencies";
+                                                }
+
+                                                showData(category === 'All' ? 'All' : category, globalData);
+                                            } else {
+                                                const anyActive = Array.from(buttons).some(btn => btn.classList.contains('active'));
+                                                if (!anyActive) {
+                                                    showData('All', globalData);
+                                                }
+                                            }
+                                        });
+                                    });
+                                    const chart = this.series.chart;
+
+                                    // Reset semua label dengan menonaktifkan dataLabels
+                                    chart.series[0].points.forEach(point => {
+                                        point.update({ dataLabels: { enabled: false } }, false);
+                                    });
+                                    this.update({
+                                        dataLabels: {
+                                            enabled: true,
+                                            format: '{point.name}',
+                                            align: 'center',
+                                            verticalAlign: 'middle',
+                                            style: {
+                                                fontWeight: 'bold',
+                                                color: 'black',
+                                                textOutline: 'none' 
+                                            }
+                                        }
+                                    });
+                                    chart.redraw();
+                                }
+                            }
+                        }
+                    }
+                },
+
+                legend: {
+                    enabled: false
+                },
+                tooltip: {
+                    formatter: function () {
+                        // Tampilkan point.name jika tersedia, jika tidak fallback ke point.key
+                        const countryName = this.point.name || this.point['hc-key'];
+                return `<b>${countryName}</b>`;
+                    },
+                    followPointer: true // Tooltip mengikuti pointer saat hover
+                },
+                series: [{
+                    data: updateData,
+                    joinBy: 'hc-key',
+                    name: 'Data Eropa',
+                    nullColor: '#DDF0FF',
+                    borderColor: "#8BB8DC",
+                    dataLabels: {
+                        enabled: false
+                    }
+                }]
+            });
+            // const series = chart.series[0];
+        })();
+       
+</script>
+
+</body>
+</html>

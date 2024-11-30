@@ -305,7 +305,7 @@ display: inline-flex;
 }
 
 .modal-close {
-    color: #aaa;
+    color: #254055;
     position: absolute;
     top: 0px;
     right: 10px;
@@ -315,7 +315,7 @@ display: inline-flex;
 
 .modal-close:hover,
 .modal-close:focus {
-    color: black;
+    color: #254055;
     text-decoration: none;
     cursor: pointer;
 }

@@ -261,16 +261,12 @@
                             if (point['hc-key'] === item['hc-key']) {
                                 point.update({
                                     dataLabels: {
-                                        enabled: true,
-                                        format: '{point.name}',
-                                        align: 'center',
-                                        verticalAlign: 'middle',
-                                        style: {
-                                            fontWeight: 'bold',
-                                            color: 'black',
-                                            textOutline: 'none'
+                                            enabled: true,
+                                            useHTML: true, // Gunakan HTML untuk data label
+                                            formatter: function () {
+                                                return `<span class="custom-label">${globalData.name}</span>`;
+                                            }
                                         }
-                                    }
                                 });
                                 const contentHTML = `
                                         <div class="country-content">
@@ -551,16 +547,13 @@
                                     chart.series[0].points.forEach(point => {
                                         point.update({ dataLabels: { enabled: false } }, false);
                                     });
+                                    console.log('gloval', globalData)
                                     this.update({
                                         dataLabels: {
                                             enabled: true,
-                                            format: '{point.name}',
-                                            align: 'center',
-                                            verticalAlign: 'middle',
-                                            style: {
-                                                fontWeight: 'bold',
-                                                color: 'black',
-                                                textOutline: 'none' 
+                                            useHTML: true, // Gunakan HTML untuk data label
+                                            formatter: function () {
+                                                return `<span class="custom-label">${globalData.name}</span>`;
                                             }
                                         }
                                     });
@@ -576,11 +569,17 @@
                 },
                 tooltip: {
                     formatter: function () {
-                        // Tampilkan point.name jika tersedia, jika tidak fallback ke point.key
                         const countryName = this.point.name || this.point['hc-key'];
-                return `<b>${countryName}</b>`;
+                        return `<div class="custom-tooltip"><b>${countryName}</b></div>`;
                     },
-                    followPointer: true // Tooltip mengikuti pointer saat hover
+                    followPointer: true, // Tooltip mengikuti kursor
+                    useHTML: true, // Tooltip dirender sebagai HTML
+                    backgroundColor: 'transparent', // Hilangkan background default Highcharts
+                    borderWidth: 0, // Hilangkan border default Highcharts
+                    shadow: false, // Hilangkan bayangan default Highcharts
+                    style: {
+                        pointerEvents: 'none' // Hindari konflik dengan event
+                    }
                 },
                 series: [{
                     data: updateData,

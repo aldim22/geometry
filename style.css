@@ -32,7 +32,7 @@
     font-size: 14px; 
     border-radius: 30px;
     white-space: nowrap;
-    text-align: center;
+    text-align: left;
     pointer-events: none;
     border: 1px solid #ddd; 
     transition: all 0.2s ease-in-out;
